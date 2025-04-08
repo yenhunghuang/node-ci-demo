@@ -43,9 +43,9 @@ jobs:
             - name: Run tests with coverage
               run: |
                   npm test -- --coverage --coverageThreshold='{"global":{"branches":80,"functions":80,"lines":80,"statements":80}}'
-            - name: Upload coverage report (if exists)
+            - name: Upload coverage report
               if: success()
-              uses: actions/upload-artifact@v2.3.1
+              uses: actions/upload-artifact@v4
               with:
                   name: coverage-report
                   path: coverage
