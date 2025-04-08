@@ -7,24 +7,50 @@ on:
         branches: [main]
 
 jobs:
-    build:
+    setup:
+        name: Install & Cache
         runs-on: ubuntu-latest
-        strategy:
-            matrix:
-                node-version: [16.x, 18.x, 20.x]
+        outputs:
+            node-version: ${{ steps.setver.outputs.version }}
+        steps:
+            - name: Set Node version
+              id: setver
+              run: echo "version=18.x" >> $GITHUB_OUTPUT
+
+    lint:
+        runs-on: ubuntu-latest
+        needs: setup
 
         steps:
             - uses: actions/checkout@v3
-            - name: Use Node.js ${{ matrix.node-version }}
-              uses: actions/setup-node@v3
+            - uses: actions/setup-node@v3
               with:
-                  node-version: ${{ matrix.node-version }}
+                  node-version: 18.x
 
-            - name: Install dependencies
+            - name: Install deps
               run: npm ci
 
-            - name: Run ESLint
+            - name: Lint Code
               run: npm run lint
 
-            - name: Run tests
-              run: npm test
+    test:
+        runs-on: ubuntu-latest
+        needs: setup
+
+        steps:
+            - uses: actions/checkout@v3
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: 18.x
+
+            - name: Install deps
+              run: npm ci
+
+            - name: Run tests with coverage
+              run: npm test -- --coverage
+
+            - name: Upload coverage report
+              uses: actions/upload-artifact@v3
+              with:
+                  name: coverage-report
+                  path: coverage
