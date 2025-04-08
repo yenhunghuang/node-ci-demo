@@ -20,38 +20,30 @@ jobs:
     lint:
         runs-on: ubuntu-latest
         needs: setup
-
         steps:
             - uses: actions/checkout@v3
             - uses: actions/setup-node@v3
               with:
                   node-version: 18.x
-
             - name: Install deps
               run: npm ci
-
             - name: Lint Code
               run: npm run lint
 
     test:
         runs-on: ubuntu-latest
         needs: setup
-
         steps:
             - uses: actions/checkout@v3
             - uses: actions/setup-node@v3
               with:
                   node-version: 18.x
-
             - name: Install deps
               run: npm ci
-
             - name: Run tests with coverage
               run: npm test -- --coverage
-
-           - name: Upload coverage report
-  uses: actions/upload-artifact@v2.3.1
-  with:
-    name: coverage-report
-    path: coverage
-
+            - name: Upload coverage report
+              uses: actions/upload-artifact@v2.3.1
+              with:
+                  name: coverage-report
+                  path: coverage
